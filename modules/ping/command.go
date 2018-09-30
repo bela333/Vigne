@@ -2,7 +2,9 @@ package ping
 
 import (
 	"fmt"
+	"github.com/bela333/Vigne/messages"
 	"github.com/bwmarrin/discordgo"
+	"time"
 )
 
 type PingCommand struct {}
@@ -11,7 +13,9 @@ func (PingCommand) Check(command string) bool {
 	return command == "ping"
 }
 
-func (c *PingCommand) Action(m *discordgo.MessageCreate, args []string) error {
-	fmt.Println("Pong!")
+func (c *PingCommand) Action(m *discordgo.MessageCreate, args []string, creator *messages.MessageCreator) error {
+	msg := creator.NewMessage()
+	msg.SetExpiry(time.Second*10)
+	msg.SetContent(fmt.Sprintf("<@%s> Pong!", m.Author.ID))
 	return nil
 }

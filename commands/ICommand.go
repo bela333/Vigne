@@ -1,8 +1,11 @@
 package commands
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"github.com/bela333/Vigne/messages"
+	"github.com/bwmarrin/discordgo"
+)
 
 type ICommand interface {
 	Check(string) bool
-	Action(*discordgo.MessageCreate,[]string) error
+	Action(m *discordgo.MessageCreate,args []string, creator *messages.MessageCreator) error
 }

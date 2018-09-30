@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"github.com/bela333/Vigne/messages"
 	"github.com/bela333/Vigne/server"
 	"github.com/bwmarrin/discordgo"
 	"regexp"
@@ -33,6 +34,8 @@ func (module *CommandsModule) Init(s *server.Server) error {
 	return nil
 }
 
+
+
 func (module *CommandsModule) handleCommands(s *discordgo.Session, m *discordgo.MessageCreate)  {
 	//Does command match?
 	if module.Regex.MatchString(m.Content) {
@@ -49,10 +52,16 @@ func (module *CommandsModule) handleCommands(s *discordgo.Session, m *discordgo.
 			//Check
 			if commandHandler.Check(command){
 				//If found execute action
-				err := commandHandler.Action(m, args)
-				//Handle error
+				c := messages.MessageCreator{ChannelID:m.ChannelID}
+				err := commandHandler.Action(m, args, &c)
+				//Handle command error
 				if err != nil {
 					fmt.Printf("%s (%s) has failed to execute %s. Reason: %s\n", m.Author.Username, m.Author.ID, m.Content, err)
+					return
+				}
+				err = c.Send(module.Server)
+				if err != nil {
+					fmt.Printf("Couldn't send message: %s\n", err)
 					return
 				}
 				break
