@@ -32,6 +32,7 @@ func (d *Database) CreateConfig() error {
 	}
 	err = d.Redis.HMSet(d.Decorate("config"), map[string]interface{}{
 		"token": "Bot 123456789.abcdEFGH",
+		"commandRegex": "--([^ ]+)(?: (.*))?",
 	}).Err()
 	if err != nil {
 		return err
@@ -41,4 +42,8 @@ func (d *Database) CreateConfig() error {
 
 func (config *Config) Token() string {
 	return config.Database.Redis.HGet(config.Database.Decorate("config"), "token").Val()
+}
+
+func (config *Config) CommandRegex() string {
+	return config.Database.Redis.HGet(config.Database.Decorate("config"), "commandRegex").Val()
 }

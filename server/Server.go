@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"github.com/bela333/Vigne/database"
@@ -7,7 +7,7 @@ import (
 )
 
 type Server struct {
-	Modules []Module
+	Modules map[string]Module
 	Session *discordgo.Session
 	Database *database.Database
 }
@@ -16,6 +16,7 @@ func NewServer(identifier, address, password string) (*Server, error) {
 	//Create database
 	var err error
 	s := Server{}
+	s.Modules = make(map[string]Module)
 	s.Database = database.NewDatabase(identifier, address, password)
 	//Get config from database
 	config, err := s.Database.Config()
