@@ -30,10 +30,16 @@ func (d *Database) CreateConfig() error {
 	if err != nil {
 		return err
 	}
+	//Set default config
 	err = d.Redis.HMSet(d.Decorate("config"), map[string]interface{}{
 		"token": "Bot 123456789.abcdEFGH",
 		"commandRegex": "--([^ ]+)(?: (.*))?",
 	}).Err()
+	if err != nil {
+		return err
+	}
+	//Set default role selection
+	err = d.Redis.SAdd(d.Decorate("mods"), "269906162051186689").Err()
 	if err != nil {
 		return err
 	}
@@ -46,4 +52,8 @@ func (config *Config) Token() string {
 
 func (config *Config) CommandRegex() string {
 	return config.Database.Redis.HGet(config.Database.Decorate("config"), "commandRegex").Val()
+}
+
+func (config *Config) IsMod(id string) bool {
+	return config.Database.Redis.SIsMember(config.Database.Decorate("mods"), id).Val()
 }

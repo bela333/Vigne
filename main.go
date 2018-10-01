@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/bela333/Vigne/commands"
+	"github.com/bela333/Vigne/modules/debug"
 	"github.com/bela333/Vigne/modules/ping"
 	"github.com/bela333/Vigne/server"
 )
 
-//TODO: PingCommand system
+//TODO: Mention system
+//TODO: Port over commands
 //TODO: License
 
 func main() {
@@ -21,6 +23,7 @@ func main() {
 	s.RegisterModule(&commands.CommandsModule{})
 	//User modules
 	s.RegisterModule(&ping.PingModule{})
+	s.RegisterModule(&debug.DebugModule{})
 	fmt.Print("Running bot...")
 	err = s.Start()
 	if err != nil {

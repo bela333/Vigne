@@ -6,6 +6,7 @@ import (
 )
 
 type ICommand interface {
-	Check(string) bool
+	Check(cmd string) bool
 	Action(m *discordgo.MessageCreate,args []string, creator *messages.MessageCreator) error
+	ShouldRemoveOriginal() bool
 }

@@ -7,7 +7,7 @@ import (
 
 type Module interface {
 	GetName() string
-	Init(session *Server) error
+	Init(server *Server) error
 }
 
 

@@ -51,7 +51,11 @@ func (module *CommandsModule) handleCommands(s *discordgo.Session, m *discordgo.
 		for _, commandHandler := range module.Commands {
 			//Check
 			if commandHandler.Check(command){
-				//If found execute action
+				//Delete trigger message if necessary
+				if commandHandler.ShouldRemoveOriginal() {
+					s.ChannelMessageDelete(m.ChannelID, m.ID)
+				}
+				//execute action
 				c := messages.MessageCreator{ChannelID:m.ChannelID}
 				err := commandHandler.Action(m, args, &c)
 				//Handle command error

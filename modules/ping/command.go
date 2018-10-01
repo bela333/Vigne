@@ -9,6 +9,10 @@ import (
 
 type PingCommand struct {}
 
+func (c PingCommand) ShouldRemoveOriginal() bool {
+	return true
+}
+
 func (PingCommand) Check(command string) bool {
 	return command == "ping"
 }
