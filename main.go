@@ -5,12 +5,14 @@ import (
 	"github.com/bela333/Vigne/commands"
 	"github.com/bela333/Vigne/modules/debug"
 	"github.com/bela333/Vigne/modules/ping"
+	"github.com/bela333/Vigne/modules/roles"
 	"github.com/bela333/Vigne/server"
 )
 
-//TODO: Mention system
-//TODO: Port over commands
+//TODO: Reaction system
+//TODO: Port over commands (music bot, help, event?)
 //TODO: License
+//TODO: Public errors
 
 func main() {
 	fmt.Print("Creating bot...")
@@ -24,6 +26,7 @@ func main() {
 	//User modules
 	s.RegisterModule(&ping.PingModule{})
 	s.RegisterModule(&debug.DebugModule{})
+	s.RegisterModule(&roles.RolesModule{})
 	fmt.Print("Running bot...")
 	err = s.Start()
 	if err != nil {

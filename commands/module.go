@@ -47,6 +47,18 @@ func (module *CommandsModule) handleCommands(s *discordgo.Session, m *discordgo.
 		if len(submatches) > 2 {
 			args = strings.Split(submatches[2], " ")
 		}
+		//Cleanup args array
+		for i := 0 ; i < len(args); i++ {
+			val := args[i]
+			//Remove whitespace
+			val = strings.TrimSpace(val)
+			args[i] = val
+			//If argument is empty
+			if val == ""{
+				args = append(args[:i], args[i+1:]...)
+				i--
+			}
+		}
 		//Loop through every possible command
 		for _, commandHandler := range module.Commands {
 			//Check

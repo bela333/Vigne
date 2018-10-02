@@ -37,6 +37,7 @@ func NewServer(identifier, address, password string) (*Server, error) {
 		return nil, err
 	}
 	s.Session.ShouldReconnectOnError = true
+	s.Session.StateEnabled = true
 	return &s, nil
 }
 

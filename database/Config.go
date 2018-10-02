@@ -46,14 +46,14 @@ func (d *Database) CreateConfig() error {
 	return nil
 }
 
-func (config *Config) Token() string {
+func (config Config) Token() string {
 	return config.Database.Redis.HGet(config.Database.Decorate("config"), "token").Val()
 }
 
-func (config *Config) CommandRegex() string {
+func (config Config) CommandRegex() string {
 	return config.Database.Redis.HGet(config.Database.Decorate("config"), "commandRegex").Val()
 }
 
-func (config *Config) IsMod(id string) bool {
+func (config Config) IsMod(id string) bool {
 	return config.Database.Redis.SIsMember(config.Database.Decorate("mods"), id).Val()
 }
