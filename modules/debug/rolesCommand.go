@@ -26,12 +26,12 @@ func (c RolesCommand) Action(m *discordgo.MessageCreate, args []string, creator 
 	if config.IsMod(m.Author.ID) {
 		//User is a moderator. Let's send them the list of roles in this server
 		//Get channel
-		channel, err := c.server.Session.Channel(m.ChannelID)
+		channel, err := c.server.Session.State.Channel(m.ChannelID)
 		if err != nil {
 			return err
 		}
 		//Get guild
-		guild, err := c.server.Session.Guild(channel.GuildID)
+		guild, err := c.server.Session.State.Guild(channel.GuildID)
 		if err != nil {
 			return err
 		}
