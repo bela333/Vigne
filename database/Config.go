@@ -33,7 +33,7 @@ func (d *Database) CreateConfig() error {
 	//Set default config
 	err = d.Redis.HMSet(d.Decorate("config"), map[string]interface{}{
 		"token": "Bot 123456789.abcdEFGH",
-		"commandRegex": `^(?:[-]+>?|s!|v!|—|/)\s*([^ ]+)(?: (.*))?`,
+		"commandRegex": `^(?:[-]{2,}>?|[sv]!|—|/|->)\s*([^\s]+)(?:\s(.*))?$`,
 	}).Err()
 	if err != nil {
 		return err
