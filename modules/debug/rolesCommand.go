@@ -2,6 +2,7 @@ package debug
 
 import (
 	"fmt"
+	"github.com/bela333/Vigne/commands"
 	"github.com/bela333/Vigne/messages"
 	"github.com/bela333/Vigne/server"
 	"github.com/bwmarrin/discordgo"
@@ -11,6 +12,13 @@ import (
 
 type RolesCommand struct {
 	server *server.Server
+}
+
+func (c RolesCommand) GetHelpPageEntry() commands.HelpPageEntry {
+	return commands.HelpPageEntry{
+		Description:"Lists all the roles on this server. Can only be used by moderators.",
+		Command: "roles",
+	}
 }
 
 func (c RolesCommand) Check(cmd string) bool {

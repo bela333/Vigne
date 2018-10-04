@@ -1,6 +1,7 @@
 package debug
 
 import (
+	"github.com/bela333/Vigne/commands"
 	"github.com/bela333/Vigne/messages"
 	"github.com/bwmarrin/discordgo"
 	"time"
@@ -8,6 +9,13 @@ import (
 
 type TestReplacingCommand struct {
 
+}
+
+func (TestReplacingCommand) GetHelpPageEntry() commands.HelpPageEntry {
+	return commands.HelpPageEntry{
+		Description: "A debugging command",
+		Command: "replace",
+	}
 }
 
 func (TestReplacingCommand) Check(cmd string) bool {

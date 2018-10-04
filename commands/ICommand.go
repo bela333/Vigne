@@ -9,4 +9,5 @@ type ICommand interface {
 	Check(cmd string) bool
 	Action(m *discordgo.MessageCreate,args []string, creator *messages.MessageCreator) error
 	ShouldRemoveOriginal() bool
+	GetHelpPageEntry() HelpPageEntry
 }

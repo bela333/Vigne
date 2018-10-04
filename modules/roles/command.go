@@ -2,6 +2,7 @@ package roles
 
 import (
 	"fmt"
+	"github.com/bela333/Vigne/commands"
 	"github.com/bela333/Vigne/messages"
 	"github.com/bela333/Vigne/server"
 	"github.com/bwmarrin/discordgo"
@@ -11,6 +12,14 @@ import (
 
 type RoleCommand struct {
 	server *server.Server
+}
+
+func (c RoleCommand) GetHelpPageEntry() commands.HelpPageEntry {
+	return commands.HelpPageEntry{
+		Description: "Gives you a role of your choosing",
+		Usage:"[role name]",
+		Command:"role",
+	}
 }
 
 func (RoleCommand) Check(cmd string) bool {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bela333/Vigne/commands"
 	"github.com/bela333/Vigne/modules/debug"
+	"github.com/bela333/Vigne/modules/help"
 	"github.com/bela333/Vigne/modules/ping"
 	"github.com/bela333/Vigne/modules/roles"
 	"github.com/bela333/Vigne/modules/welcome"
@@ -29,6 +30,7 @@ func main() {
 	s.RegisterModule(&debug.DebugModule{})
 	s.RegisterModule(&roles.RolesModule{})
 	s.RegisterModule(&welcome.WelcomeModule{})
+	s.RegisterModule(&help.HelpModule{})
 	fmt.Print("Running bot... ")
 	err = s.Start()
 	if err != nil {
