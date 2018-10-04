@@ -10,8 +10,9 @@ import (
 type MessageBuilder struct {
 	ChannelID string
 	content   string
-	embed     *discordgo.MessageEmbed
 	expiry    time.Duration
+
+	embedBuilder *EmbedBuilder
 
 	//Message was already sent
 	sent bool
@@ -30,7 +31,9 @@ type MessageBuilder struct {
 func (b *MessageBuilder) getMessageSend() *discordgo.MessageSend {
 	m := discordgo.MessageSend{}
 	m.Content = b.content
-	m.Embed = b.embed
+	if b.embedBuilder != nil {
+		m.Embed = b.embedBuilder.Build()
+	}
 	return &m
 }
 
@@ -74,8 +77,11 @@ func (b *MessageBuilder) SetContent(content string)  {
 	b.content = content
 }
 
-func (b *MessageBuilder) SetEmbed(embed *discordgo.MessageEmbed)  {
-	b.embed = embed
+func (b *MessageBuilder) GetEmbedBuilder() *EmbedBuilder {
+	if b.embedBuilder == nil {
+		b.embedBuilder = NewEmbedBuilder()
+	}
+	return b.embedBuilder
 }
 
 func (b *MessageBuilder) SetExpiry(expiry time.Duration)  {

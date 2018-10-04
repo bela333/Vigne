@@ -18,6 +18,7 @@ func (c RolesCommand) GetHelpPageEntry() commands.HelpPageEntry {
 	return commands.HelpPageEntry{
 		Description:"Lists all the roles on this server. Can only be used by moderators.",
 		Command: "roles",
+		IsHidden:true,
 	}
 }
 

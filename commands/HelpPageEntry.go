@@ -4,4 +4,5 @@ type HelpPageEntry struct {
 	Description string
 	Usage string
 	Command string
+	IsHidden bool
 }

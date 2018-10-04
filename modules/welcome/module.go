@@ -36,7 +36,7 @@ func (m *WelcomeModule) OnJoin(s *discordgo.Session, e *discordgo.GuildMemberAdd
 	creator := messages.MessageCreator{ChannelID:m.Database.GetMain()}
 	before := creator.NewMessage()
 	before.SetContent(fmt.Sprintf(m.Database.GetTextBefore(), e.User.ID))
-	before.SetExpiry(time.Second*10)
+	before.SetExpiry(time.Minute)
 
 	after := before.GetAfter()
 	after.SetContent(fmt.Sprintf(m.Database.GetTextAfter(), e.User.ID))

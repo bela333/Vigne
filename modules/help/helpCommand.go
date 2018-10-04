@@ -5,7 +5,6 @@ import (
 	"github.com/bela333/Vigne/commands"
 	"github.com/bela333/Vigne/messages"
 	"github.com/bwmarrin/discordgo"
-	"strings"
 	"time"
 )
 
@@ -30,23 +29,37 @@ func (c *HelpCommand) Action(m *discordgo.MessageCreate, args []string, creator 
 			}
 		}
 		if cmd == nil {
+			//TODO: Public error
 			msg.SetContent("Couldn't find this command")
 			msg.SetExpiry(time.Second*10)
 			return nil
 		}
 		entry := cmd.GetHelpPageEntry()
-		msg.SetContent(fmt.Sprintf(`--%s %s
-	%s`, entry.Command, entry.Usage, entry.Description))
+		embed := msg.GetEmbedBuilder()
+		embed.SetColorRGB(0,255,255)
+
+		field := embed.NewField()
+		field.SetName(fmt.Sprintf("--%s %s", entry.Command, entry.Usage))
+		field.SetValue(entry.Description)
+		field.SetInline(false)
+
 	}else {
 		msg := creator.NewMessage()
 		msg.SetExpiry(time.Minute)
-		textBuilder := strings.Builder{}
-		textBuilder.WriteString("Available commands: \n")
+
+		embed := msg.GetEmbedBuilder()
+		embed.SetTitle("Available commands: ")
+		embed.SetColorRGB(255,255,0)
 		for _, command := range c.CommandsModule.Commands {
 			entry := command.GetHelpPageEntry()
-			textBuilder.WriteString(fmt.Sprintf("--%s %s\n", entry.Command, entry.Usage))
+			if entry.IsHidden {
+				continue
+			}
+			field := embed.NewField()
+			field.SetName(fmt.Sprintf("--%s %s\n", entry.Command, entry.Usage))
+			field.SetValue(entry.Description)
+			field.SetInline(false)
 		}
-		msg.SetContent(textBuilder.String())
 	}
 	return nil
 }

@@ -37,13 +37,15 @@ func (c RoleCommand) Action(m *discordgo.MessageCreate, args []string, creator *
 		helpMessage.SetExpiry(time.Second*30)
 
 		allRoles := roleProvider.GetAllRoles()
-		//TODO: Add messageTransformer that generates an embed for this
-		outText := "<@" + m.Author.ID + ">\n"
-		outText += "Available roles:\n"
+
+		embed := helpMessage.GetEmbedBuilder()
+		embed.SetTitle("Available roles: ")
+		description := ""
 		for role := range allRoles {
-			outText += "	" + role + "\n"
+			description += "--role " + role + "\n"
 		}
-		helpMessage.SetContent(outText)
+		embed.SetDescription(description)
+		helpMessage.SetContent("<@" + m.Author.ID + ">\n")
 		return nil
 	}
 	//A role WAS specified

@@ -15,6 +15,7 @@ func (TestReplacingCommand) GetHelpPageEntry() commands.HelpPageEntry {
 	return commands.HelpPageEntry{
 		Description: "A debugging command",
 		Command: "replace",
+		IsHidden:true,
 	}
 }
 

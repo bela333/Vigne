@@ -12,7 +12,7 @@ import (
 )
 
 //TODO: Message Reaction system
-//TODO: Port over commands (music bot, help, event?)
+//TODO: Port over commands (music bot, event?)
 //TODO: License
 //TODO: Public errors
 
