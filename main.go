@@ -6,12 +6,12 @@ import (
 	"github.com/bela333/Vigne/modules/debug"
 	"github.com/bela333/Vigne/modules/ping"
 	"github.com/bela333/Vigne/modules/roles"
+	"github.com/bela333/Vigne/modules/welcome"
 	"github.com/bela333/Vigne/server"
 )
 
-//TODO: Reaction system
+//TODO: Message Reaction system
 //TODO: Port over commands (music bot, help, event?)
-//TODO: Welcome message
 //TODO: License
 //TODO: Public errors
 
@@ -28,6 +28,7 @@ func main() {
 	s.RegisterModule(&ping.PingModule{})
 	s.RegisterModule(&debug.DebugModule{})
 	s.RegisterModule(&roles.RolesModule{})
+	s.RegisterModule(&welcome.WelcomeModule{})
 	fmt.Print("Running bot... ")
 	err = s.Start()
 	if err != nil {
