@@ -11,27 +11,28 @@ import (
 
 //TODO: Reaction system
 //TODO: Port over commands (music bot, help, event?)
+//TODO: Welcome message
 //TODO: License
 //TODO: Public errors
 
 func main() {
-	fmt.Print("Creating bot...")
+	fmt.Print("Creating bot... ")
 	s, err := server.NewServer("vigne", "localhost:6379", "")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(" Done!")
+	fmt.Println("Done!")
 	//System modules
 	s.RegisterModule(&commands.CommandsModule{})
 	//User modules
 	s.RegisterModule(&ping.PingModule{})
 	s.RegisterModule(&debug.DebugModule{})
 	s.RegisterModule(&roles.RolesModule{})
-	fmt.Print("Running bot...")
+	fmt.Print("Running bot... ")
 	err = s.Start()
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(" Done!")
+	fmt.Println("Done!")
 
 }

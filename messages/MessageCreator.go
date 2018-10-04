@@ -9,7 +9,7 @@ type MessageCreator struct {
 
 func (c *MessageCreator) NewMessage() *MessageBuilder {
 	b := &MessageBuilder{}
-	b.channelID = c.ChannelID
+	b.ChannelID = c.ChannelID
 	c.Builders = append(c.Builders, b)
 	return b
 }

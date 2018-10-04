@@ -20,6 +20,7 @@ func (DebugModule) Init(server *server.Server) error {
 	}
 	cmd := cmdi.(*commands.CommandsModule)
 	cmd.RegisterCommand(RolesCommand{server:server})
+	cmd.RegisterCommand(TestReplacingCommand{})
 	return nil
 }
 

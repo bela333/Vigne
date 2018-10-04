@@ -12,10 +12,10 @@ type Module interface {
 
 
 func (s *Server) RegisterModule(m Module)  {
-	fmt.Printf("Loading %s...", m.GetName())
+	fmt.Printf("Loading %s... ", m.GetName())
 	m.Init(s)
 	s.Modules[m.GetName()] = m
-	fmt.Println(" Done!")
+	fmt.Println("Done!")
 }
 
 func (s *Server) GetModuleByName(name string) (Module, error) {
