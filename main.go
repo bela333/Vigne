@@ -11,11 +11,6 @@ import (
 	"github.com/bela333/Vigne/server"
 )
 
-//TODO: Message Reaction system
-//TODO: Port over commands (music bot, event?)
-//TODO: License
-//TODO: Public errors
-
 func main() {
 	fmt.Print("Creating bot... ")
 	s, err := server.NewServer("vigne", "localhost:6379", "")
