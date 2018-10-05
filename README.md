@@ -23,6 +23,8 @@ vigne:welcomer:text:after | | After a short period of time, the original message
 
 ## Default commands
 
+Every command starts with a prefix. With the default config there are multiple prefixes. The *official* one is `--`
+
 | Command | Description |
 | - | - |
 ping | Pong!
