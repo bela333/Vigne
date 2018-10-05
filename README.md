@@ -10,8 +10,8 @@ $ go get https://github.com/bela333/Vigne
 
 The **Bold** ones are required.
 
-name | Hash information | description 
-- | - | -
+| name | Hash information | description |
+| - | - | - |
 **vigne:hasConfig** | | Should always be 1
 **vigne:config** | token, commandRegex | *Hash*. Simple configuration
 **vigne:mods** | | *Set*. User IDs of moderators
@@ -23,8 +23,8 @@ vigne:welcomer:text:after | | After a short period of time, the original message
 
 ## Default commands
 
-Command | Description
-- | -
+| Command | Description |
+| - | - |
 ping | Pong!
 role | Gives the user a role according to vigne:roles. A user can only have one role from vigne:roles at a time.
 help | Lists all available, not hidden commands.
