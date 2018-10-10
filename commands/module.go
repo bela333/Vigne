@@ -67,15 +67,21 @@ func (module *CommandsModule) handleCommands(s *discordgo.Session, m *discordgo.
 				if commandHandler.ShouldRemoveOriginal() {
 					s.ChannelMessageDelete(m.ChannelID, m.ID)
 				}
+				//Get messages module
+				imessages, err := module.Server.GetModuleByName("messages")
+				if err != nil {
+					return
+				}
+				messenger := imessages.(*messages.MessagesModule)
 				//execute action
-				c := messages.MessageCreator{ChannelID:m.ChannelID}
-				err := commandHandler.Action(m, args, &c)
+				c := messenger.NewMessageCreator(m.ChannelID)
+				err = commandHandler.Action(m, args, c)
 				//Handle command error
 				if err != nil {
 					fmt.Printf("%s (%s) has failed to execute %s. Reason: %s\n", m.Author.Username, m.Author.ID, m.Content, err)
 					return
 				}
-				err = c.Send(module.Server)
+				err = c.Send()
 				if err != nil {
 					fmt.Printf("Couldn't send message: %s\n", err)
 					return

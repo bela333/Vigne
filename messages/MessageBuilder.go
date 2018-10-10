@@ -2,7 +2,6 @@ package messages
 
 import (
 	"github.com/bela333/Vigne/errors"
-	"github.com/bela333/Vigne/server"
 	"github.com/bwmarrin/discordgo"
 	"time"
 )
@@ -12,14 +11,14 @@ type MessageBuilder struct {
 	content   string
 	expiry    time.Duration
 
+	module *MessagesModule
+
 	embedBuilder *EmbedBuilder
 
 	//Message was already sent
 	sent bool
 	//If the message was already sent, it contains the reference to the sent message
 	message *discordgo.Message
-	//If the message was already sent, it contains the session, used to send the message
-	sessionUsed *discordgo.Session
 
 	//Message shouldn't be sent
 	deleted bool
@@ -50,9 +49,8 @@ func (b *MessageBuilder) getMessageEdit(channelID, messageID string) *discordgo.
 	return &mEdit
 }
 
-func (b *MessageBuilder) afterSend(session *discordgo.Session, message *discordgo.Message)  {
+func (b *MessageBuilder) afterSend(message *discordgo.Message)  {
 	b.message = message
-	b.sessionUsed = session
 	b.sent = true
 	if b.expiry != 0 {
 		time.AfterFunc(b.expiry, func() {
@@ -61,14 +59,14 @@ func (b *MessageBuilder) afterSend(session *discordgo.Session, message *discordg
 	}
 }
 
-func (b *MessageBuilder) Send(s *server.Server) error {
+func (b *MessageBuilder) Send() error {
 	if !b.deleted {
 		m := b.getMessageSend()
-		msg, err := s.Session.ChannelMessageSendComplex(b.ChannelID, m)
+		msg, err := b.module.server.Session.ChannelMessageSendComplex(b.ChannelID, m)
 		if err != nil {
 			return err
 		}
-		b.afterSend(s.Session, msg)
+		b.afterSend(msg)
 	}
 	return nil
 }
@@ -92,12 +90,18 @@ func (b *MessageBuilder) Delete() error{
 	b.deleted = true
 	if b.sent {
 		if b.afterBuilder != nil {
-			err := b.ReplaceMessage(b.afterBuilder)
+			//Remove all reactions from message
+			err := b.module.server.Session.MessageReactionsRemoveAll(b.message.ChannelID, b.message.ID)
+			if err != nil {
+				return err
+			}
+			//Replace message with the next one
+			err = b.ReplaceMessage(b.afterBuilder)
 			if err != nil {
 				return err
 			}
 		}else {
-			err := b.sessionUsed.ChannelMessageDelete(b.message.ChannelID, b.message.ID)
+			err := b.module.server.Session.ChannelMessageDelete(b.message.ChannelID, b.message.ID)
 			if err != nil {
 				return err
 			}
@@ -111,11 +115,11 @@ func (b *MessageBuilder) Delete() error{
 //Replaces the content of the MessageBuilder with message
 func (b *MessageBuilder) ReplaceMessage(message *MessageBuilder) error {
 	if b.sent {
-		msg, err := b.sessionUsed.ChannelMessageEditComplex(message.getMessageEdit(b.message.ChannelID, b.message.ID))
+		msg, err := b.module.server.Session.ChannelMessageEditComplex(message.getMessageEdit(b.message.ChannelID, b.message.ID))
 		if err != nil {
 			return err
 		}
-		message.afterSend(b.sessionUsed, msg)
+		message.afterSend(msg)
 	}else {
 		return errors.MessageNotSent
 	}
@@ -128,6 +132,7 @@ func (b *MessageBuilder) GetAfter() *MessageBuilder {
 	if b.afterBuilder == nil {
 		ba := MessageBuilder{}
 		ba.ChannelID = b.ChannelID
+		ba.module = b.module
 		b.afterBuilder = &ba
 		return &ba
 	}else{

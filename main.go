@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/bela333/Vigne/commands"
+	"github.com/bela333/Vigne/messages"
 	"github.com/bela333/Vigne/modules/debug"
 	"github.com/bela333/Vigne/modules/help"
 	"github.com/bela333/Vigne/modules/ping"
@@ -18,8 +19,9 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Done!")
-	//System modules
+	//Service modules
 	s.RegisterModule(&commands.CommandsModule{})
+	s.RegisterModule(&messages.MessagesModule{})
 	//User modules
 	s.RegisterModule(&ping.PingModule{})
 	s.RegisterModule(&debug.DebugModule{})

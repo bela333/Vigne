@@ -32,8 +32,15 @@ func (m *WelcomeModule) Init(server *server.Server) error {
 }
 
 func (m *WelcomeModule) OnJoin(s *discordgo.Session, e *discordgo.GuildMemberAdd)  {
+	//Get messages module
+	imessages, err := m.server.GetModuleByName("messages")
+	if err != nil {
+		return
+	}
+	messenger := imessages.(*messages.MessagesModule)
+
 	//Send message in main channel
-	creator := messages.MessageCreator{ChannelID:m.Database.GetMain()}
+	creator := messenger.NewMessageCreator(m.Database.GetMain())
 	before := creator.NewMessage()
 	before.SetContent(fmt.Sprintf(m.Database.GetTextBefore(), e.User.ID))
 	before.SetExpiry(time.Minute)
@@ -41,30 +48,37 @@ func (m *WelcomeModule) OnJoin(s *discordgo.Session, e *discordgo.GuildMemberAdd
 	after := before.GetAfter()
 	after.SetContent(fmt.Sprintf(m.Database.GetTextAfter(), e.User.ID))
 
-	creator.Send(m.server)
+	creator.Send()
 	//Send message in "secret" channel
 	if m.Database.GetSecret() != "" {
-		creator := messages.MessageCreator{ChannelID:m.Database.GetSecret()}
+		creator := messenger.NewMessageCreator(m.Database.GetSecret())
 
 		secret := creator.NewMessage()
 		secret.SetContent(fmt.Sprintf(`%s has joined. User ID: %s
 Full name: %s#%s
 Mention: <@%s>.`, e.Member.User.Username, e.Member.User.ID, e.Member.User.Username, e.Member.User.Discriminator, e.Member.User.ID))
 
-		creator.Send(m.server)
+		creator.Send()
 	}
 }
 
 func (m *WelcomeModule) OnLeave(s *discordgo.Session, e *discordgo.GuildMemberRemove)  {
+	//Get messages module
+	imessages, err := m.server.GetModuleByName("messages")
+	if err != nil {
+		return
+	}
+	messenger := imessages.(*messages.MessagesModule)
+
 	//Send message in "secret" channel
 	if m.Database.GetSecret() != "" {
-		creator := messages.MessageCreator{ChannelID:m.Database.GetSecret()}
+		creator := messenger.NewMessageCreator(m.Database.GetSecret())
 
 		secret := creator.NewMessage()
 		secret.SetContent(fmt.Sprintf(`%s has left. User ID: %s
 Full name: %s#%s
 Mention: <@%s>.`, e.Member.User.Username, e.Member.User.ID, e.Member.User.Username, e.Member.User.Discriminator, e.Member.User.ID))
 
-		creator.Send(m.server)
+		creator.Send()
 	}
 }
