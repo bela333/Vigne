@@ -1,6 +1,7 @@
 package messages
 
 import (
+	"fmt"
 	"github.com/bela333/Vigne/errors"
 	"github.com/bwmarrin/discordgo"
 	"time"
@@ -14,6 +15,8 @@ type MessageBuilder struct {
 	module *MessagesModule
 
 	embedBuilder *EmbedBuilder
+
+	reactions map[string]*ReactionObject
 
 	//Message was already sent
 	sent bool
@@ -50,6 +53,25 @@ func (b *MessageBuilder) getMessageEdit(channelID, messageID string) *discordgo.
 }
 
 func (b *MessageBuilder) afterSend(message *discordgo.Message)  {
+	if b.reactions != nil {
+		//Run this in another thread as adding reactions can take some time
+		go func() {
+			handlers, ok := b.module.Callbacks[message.ID]
+			if !ok {
+				b.module.Callbacks[message.ID] = map[string]*ReactionObject{}
+				handlers = b.module.Callbacks[message.ID]
+			}
+			for name, handler := range b.reactions  {
+				handlers[name] = handler
+				err := b.module.server.Session.MessageReactionAdd(message.ChannelID, message.ID, name)
+				if err != nil {
+					fmt.Printf("Error in Reactions thread: %s.\n", err)
+					return
+				}
+
+			}
+		}()
+	}
 	b.message = message
 	b.sent = true
 	if b.expiry != 0 {
@@ -89,6 +111,8 @@ func (b *MessageBuilder) SetExpiry(expiry time.Duration)  {
 func (b *MessageBuilder) Delete() error{
 	b.deleted = true
 	if b.sent {
+		//Remove message from the reaction callback map
+		delete(b.module.Callbacks, b.message.ID)
 		if b.afterBuilder != nil {
 			//Remove all reactions from message
 			err := b.module.server.Session.MessageReactionsRemoveAll(b.message.ChannelID, b.message.ID)
@@ -138,4 +162,16 @@ func (b *MessageBuilder) GetAfter() *MessageBuilder {
 	}else{
 		return nil
 	}
+}
+
+func (b *MessageBuilder) GetReactionHandler(emoji string) *ReactionObject {
+
+	if b.reactions == nil {
+		b.reactions = map[string]*ReactionObject{}
+	}
+	_, ok := b.reactions[emoji]
+	if !ok {
+		b.reactions[emoji] = &ReactionObject{}
+	}
+	return b.reactions[emoji]
 }
