@@ -2,11 +2,13 @@ package commands
 
 import (
 	"fmt"
+	"github.com/bela333/Vigne/errors"
 	"github.com/bela333/Vigne/messages"
 	"github.com/bela333/Vigne/server"
 	"github.com/bwmarrin/discordgo"
 	"regexp"
 	"strings"
+	"time"
 )
 
 type CommandsModule struct {
@@ -78,7 +80,21 @@ func (module *CommandsModule) handleCommands(s *discordgo.Session, m *discordgo.
 				err = commandHandler.Action(m, args, c)
 				//Handle command error
 				if err != nil {
-					fmt.Printf("%s (%s) has failed to execute %s. Reason: %s\n", m.Author.Username, m.Author.ID, m.Content, err)
+					//Check if err is Public error
+					publicErr, ok := err.(*errors.PublicError)
+					if ok {
+						c := messenger.NewMessageCreator(m.ChannelID)
+						msg := c.NewMessage()
+						msg.SetContent(fmt.Sprintf("<@%s>, %s", m.Author.ID, publicErr.PublicPart))
+						msg.SetExpiry(time.Second*10)
+						c.Send()
+						private := publicErr.Error()
+						if private != "" {
+							fmt.Printf("%s (%s) has failed to execute %s. Reason: %s\n", m.Author.Username, m.Author.ID, m.Content, private)
+						}
+					}else {
+						fmt.Printf("%s (%s) has failed to execute %s. Reason: %s\n", m.Author.Username, m.Author.ID, m.Content, err)
+					}
 					return
 				}
 				err = c.Send()

@@ -8,3 +8,8 @@ var CreatedConfig = errors.New("couldn't find configuration in the database. Cre
 var NoModule = errors.New("couldn't find registered module")
 var MessageNotSent = errors.New("couldn't replace message, since it doesn't exist")
 var NoWelcomer = errors.New("couldn't find welcomer:main, welcomer:text:after or welcomer:text:before in the database")
+var InvalidExtractor = errors.New("music can't be played from this site")
+
+//Public errors
+var NoCommand = New("", "Couldn't find this command")
+var NoMusic = New("couldn't find musicChannel and musicVoiceChannel in the config. Music bot functionality will be unavailable", "The Music Bot is unavailable")

@@ -3,6 +3,7 @@ package roles
 import (
 	"fmt"
 	"github.com/bela333/Vigne/commands"
+	"github.com/bela333/Vigne/errors"
 	"github.com/bela333/Vigne/messages"
 	"github.com/bela333/Vigne/server"
 	"github.com/bwmarrin/discordgo"
@@ -51,12 +52,8 @@ func (c RoleCommand) Action(m *discordgo.MessageCreate, args []string, creator *
 	//A role WAS specified
 	role, err := roleProvider.GetRoleIDFromName(args[0])
 	if err != nil {
-		//TODO: Reminder: This can be made better with the Public Errors feature
 		if err == redis.Nil {
-			errorMessage := creator.NewMessage()
-			errorMessage.SetContent(fmt.Sprintf("Couldn't find role %s.", args[0]))
-			errorMessage.SetExpiry(time.Second*10)
-			return nil
+			return errors.New("", fmt.Sprintf("Couldn't find role %s.", args[0]))
 		}
 		return err
 	}

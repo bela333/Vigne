@@ -12,7 +12,7 @@ type MessageBuilder struct {
 	content   string
 	expiry    time.Duration
 
-	module *MessagesModule
+	Module *MessagesModule
 
 	embedBuilder *EmbedBuilder
 
@@ -56,14 +56,14 @@ func (b *MessageBuilder) afterSend(message *discordgo.Message)  {
 	if b.reactions != nil {
 		//Run this in another thread as adding reactions can take some time
 		go func() {
-			handlers, ok := b.module.Callbacks[message.ID]
+			handlers, ok := b.Module.Callbacks[message.ID]
 			if !ok {
-				b.module.Callbacks[message.ID] = map[string]*ReactionObject{}
-				handlers = b.module.Callbacks[message.ID]
+				b.Module.Callbacks[message.ID] = map[string]*ReactionObject{}
+				handlers = b.Module.Callbacks[message.ID]
 			}
 			for name, handler := range b.reactions  {
 				handlers[name] = handler
-				err := b.module.server.Session.MessageReactionAdd(message.ChannelID, message.ID, name)
+				err := b.Module.server.Session.MessageReactionAdd(message.ChannelID, message.ID, name)
 				if err != nil {
 					fmt.Printf("Error in Reactions thread: %s.\n", err)
 					return
@@ -84,7 +84,7 @@ func (b *MessageBuilder) afterSend(message *discordgo.Message)  {
 func (b *MessageBuilder) Send() error {
 	if !b.deleted {
 		m := b.getMessageSend()
-		msg, err := b.module.server.Session.ChannelMessageSendComplex(b.ChannelID, m)
+		msg, err := b.Module.server.Session.ChannelMessageSendComplex(b.ChannelID, m)
 		if err != nil {
 			return err
 		}
@@ -112,10 +112,10 @@ func (b *MessageBuilder) Delete() error{
 	b.deleted = true
 	if b.sent {
 		//Remove message from the reaction callback map
-		delete(b.module.Callbacks, b.message.ID)
+		delete(b.Module.Callbacks, b.message.ID)
 		if b.afterBuilder != nil {
 			//Remove all reactions from message
-			err := b.module.server.Session.MessageReactionsRemoveAll(b.message.ChannelID, b.message.ID)
+			err := b.Module.server.Session.MessageReactionsRemoveAll(b.message.ChannelID, b.message.ID)
 			if err != nil {
 				return err
 			}
@@ -125,7 +125,7 @@ func (b *MessageBuilder) Delete() error{
 				return err
 			}
 		}else {
-			err := b.module.server.Session.ChannelMessageDelete(b.message.ChannelID, b.message.ID)
+			err := b.Module.server.Session.ChannelMessageDelete(b.message.ChannelID, b.message.ID)
 			if err != nil {
 				return err
 			}
@@ -139,7 +139,7 @@ func (b *MessageBuilder) Delete() error{
 //Replaces the content of the MessageBuilder with message
 func (b *MessageBuilder) ReplaceMessage(message *MessageBuilder) error {
 	if b.sent {
-		msg, err := b.module.server.Session.ChannelMessageEditComplex(message.getMessageEdit(b.message.ChannelID, b.message.ID))
+		msg, err := b.Module.server.Session.ChannelMessageEditComplex(message.getMessageEdit(b.message.ChannelID, b.message.ID))
 		if err != nil {
 			return err
 		}
@@ -156,7 +156,7 @@ func (b *MessageBuilder) GetAfter() *MessageBuilder {
 	if b.afterBuilder == nil {
 		ba := MessageBuilder{}
 		ba.ChannelID = b.ChannelID
-		ba.module = b.module
+		ba.Module = b.Module
 		b.afterBuilder = &ba
 		return &ba
 	}else{

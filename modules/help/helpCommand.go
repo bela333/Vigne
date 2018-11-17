@@ -3,6 +3,7 @@ package help
 import (
 	"fmt"
 	"github.com/bela333/Vigne/commands"
+	"github.com/bela333/Vigne/errors"
 	"github.com/bela333/Vigne/messages"
 	"github.com/bwmarrin/discordgo"
 	"time"
@@ -29,10 +30,7 @@ func (c *HelpCommand) Action(m *discordgo.MessageCreate, args []string, creator 
 			}
 		}
 		if cmd == nil {
-			//TODO: Public error
-			msg.SetContent("Couldn't find this command")
-			msg.SetExpiry(time.Second*10)
-			return nil
+			return errors.NoCommand
 		}
 		entry := cmd.GetHelpPageEntry()
 		embed := msg.GetEmbedBuilder()
