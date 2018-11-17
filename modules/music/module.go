@@ -22,6 +22,7 @@ func (m *MusicModule) Init(server *server.Server) error {
 	}
 	cmd := (cmdInterface).(*commands.CommandsModule)
 	cmd.RegisterCommand(&PlayCommand{server:server, module:m})
+	cmd.RegisterCommand(&SkipCommand{server:server, module:m})
 	return nil
 }
 

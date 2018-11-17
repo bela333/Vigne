@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/bela333/Vigne/errors"
+	"time"
 )
 
 type MusicDatabase struct {
@@ -40,4 +41,22 @@ func (d MusicDatabase) IsValidExtractor(extractor string) bool {
 
 func (d MusicDatabase) GetVoiceChannel() string {
 	return d.d.Redis.HGet(d.d.Decorate("config"), "musicVoiceChannel").Val()
+}
+
+func (d MusicDatabase) CanPlay(duration time.Duration) bool {
+	if !d.d.Redis.HExists(d.d.Decorate("config"), "maxMusicDuration").Val() {
+		//No maxMusicDuration is set
+		return true
+	}
+	max, err := d.d.Redis.HGet(d.d.Decorate("config"), "maxMusicDuration").Int()
+	if err != nil {
+		//Couldn't get maxMusicDuration
+		return true
+	}
+	if time.Duration(max)*time.Second < duration {
+		//music duration is larger than maxMusicDuration. Don't play it.
+		return false
+	}
+	return true
+
 }

@@ -13,9 +13,10 @@ The **Bold** ones are required.
 | name | Hash information | description |
 | - | - | - |
 **vigne:hasConfig** | | Should always be 1
-**vigne:config** | token, commandRegex | *Hash*. Simple configuration
+**vigne:config** | token, commandRegex, musicChannel, musicVoiceChannel, maxMusicDuration | *Hash*. Simple configuration
 **vigne:mods** | | *Set*. User IDs of moderators
 vigne:roles | Key is the lowercase name of the role. Value is the ID of the role. | *Hash*. Used by the --role command
+vigne:validExtractors | | *Set*. Whitelisted extractors for Youtube-DL
 vigne:welcomer:main | | ID of the channel where welcome messages should go
 vigne:welcomer:secret | | ID of the channel where messages of leaves and joins should go
 vigne:welcomer:text:before | | Message, that should be displayed when a user joins. Example: `Welcome %s! Have fun!`

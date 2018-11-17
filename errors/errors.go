@@ -13,3 +13,6 @@ var InvalidExtractor = errors.New("music can't be played from this site")
 //Public errors
 var NoCommand = New("", "Couldn't find this command")
 var NoMusic = New("couldn't find musicChannel and musicVoiceChannel in the config. Music bot functionality will be unavailable", "The Music Bot is unavailable")
+var NotPlaying = New("", "There is nothing playing currently...")
+var NotRequester = New("", "You can't skip this music")
+var MusicTooLong = New("", "The selected song is too long")

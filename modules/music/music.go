@@ -9,19 +9,22 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"io"
 	"os/exec"
+	"time"
 )
 
 type MusicPlayer struct {
-	server *server.Server
-	isPlaying bool
+	server    *server.Server
+	IsPlaying bool
+	skip      bool
+	CurrentlyPlaying *Music
 }
 
 //TODO: It might be better if this is moved into another thread that gets notified via a channel
 func (p *MusicPlayer) Pump() {
-	if p.isPlaying {
+	if p.IsPlaying {
 		return
 	}
-	p.isPlaying = true
+	p.IsPlaying = true
 	//Get voice channel
 	d, err := p.server.Database.Music()
 	if err != nil {
@@ -31,6 +34,7 @@ func (p *MusicPlayer) Pump() {
 	if err != nil {
 		return
 	}
+	//Join voice channel
 	voice, err := p.server.Session.ChannelVoiceJoin(channel.GuildID, channel.ID, false, true)
 	if err != nil {
 		return
@@ -48,13 +52,18 @@ func (p *MusicPlayer) Pump() {
 			url = nil
 		}
 	}
-	p.isPlaying = false
+	p.IsPlaying = false
 	//No more songs in the queue. Disconnect from voice chat
 	voice.Disconnect()
 
 }
 
+func (p *MusicPlayer) Skip()  {
+	p.skip = true
+}
+
 func (p *MusicPlayer) play(m *Music, voice *discordgo.VoiceConnection) {
+	p.CurrentlyPlaying = m
 	//Send message in music channel
 	//Get music channel
 	musicDb, err := p.server.Database.Music()
@@ -112,8 +121,10 @@ func (p *MusicPlayer) play(m *Music, voice *discordgo.VoiceConnection) {
 	go func() {
 		io.Copy(ffmpegIn, ytdlOut)
 		//Copying has finished. This usually means that a pipe have been closed.
-		ffmpegIn.Close()
 		ytdlOut.Close()
+		ffmpegIn.Close()
+		ffmpegOut.Close()
+
 	}()
 	//Start both
 	err = ffmpeg.Start()
@@ -126,9 +137,10 @@ func (p *MusicPlayer) play(m *Music, voice *discordgo.VoiceConnection) {
 	}
 	ytdlIn.Write([]byte(m.URL))
 	ytdlIn.Close()
-	//Copy opus data
+	//Copy opus data until skipped
 	opusData := make([]byte, 240) //240 is the framesize for Discord
-	for {
+	p.skip = false
+	for !p.skip {
 		_, err = io.ReadAtLeast(ffmpegOut, opusData, 240)
 		if err != nil {
 			break
@@ -136,12 +148,10 @@ func (p *MusicPlayer) play(m *Music, voice *discordgo.VoiceConnection) {
 		voice.OpusSend <- opusData
 	}
 	//io.ReadAtLeast returned an error. This usually means that the stream has finished.
-	//Close pipes incase they aren't closed already
-	ytdlOut.Close()
-	ffmpegIn.Close()
-	ffmpegOut.Close()
+	//Kill both processes
 	ytdl.Process.Kill()
 	ffmpeg.Process.Kill()
+	//Wait for them so they won't become zombie processes
 	ytdl.Wait()
 	ffmpeg.Wait()
 }
@@ -158,15 +168,21 @@ func (p *MusicPlayer) AddMusic(url string, user *discordgo.User) (*Music, error)
 	if !p.IsValidExtractor(m) {
 		return nil, errors.InvalidExtractor
 	}
-	//Add song to queue
+	//Add music database object
 	d, err := p.server.Database.Music()
 	if err != nil {
 		return nil, errors.NoMusic
 	}
+	//Check if the song is too long
+	if !d.CanPlay(time.Duration(m.Duration) * time.Second) {
+		return m, errors.MusicTooLong
+	}
+	//Convert music data to JSON
 	jsonData, err := json.Marshal(m)
 	if err != nil {
 		return nil, err
 	}
+	//And song to queue
 	err = d.AddSong(jsonData)
 	if err != nil {
 		return nil, err
