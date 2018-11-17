@@ -6,6 +6,7 @@ import (
 	"github.com/bela333/Vigne/messages"
 	"github.com/bela333/Vigne/modules/debug"
 	"github.com/bela333/Vigne/modules/help"
+	"github.com/bela333/Vigne/modules/music"
 	"github.com/bela333/Vigne/modules/ping"
 	"github.com/bela333/Vigne/modules/reactionMenu"
 	"github.com/bela333/Vigne/modules/roles"
@@ -30,6 +31,7 @@ func main() {
 	s.RegisterModule(&welcome.WelcomeModule{})
 	s.RegisterModule(&help.HelpModule{})
 	s.RegisterModule(&reactionMenu.ReactionModule{})
+	s.RegisterModule(&music.MusicModule{})
 	fmt.Print("Running bot... ")
 	err = s.Start()
 	if err != nil {

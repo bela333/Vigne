@@ -36,5 +36,5 @@ replace | Hidden. Sends `Hello` then after a short while replaces the text with 
 ## Roadmap
 - [ ] Documentation
 - [ ] Errors that are sent to the user
-- [ ] Menu system with Reactions
+- [x] Menu system with Reactions
 - [ ] Music Bot
