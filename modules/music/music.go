@@ -99,7 +99,8 @@ func (p *MusicPlayer) play(m *Music, voice *discordgo.VoiceConnection) {
 	ytdl := exec.Command("youtube-dl", "-o", "-", "-a", "-")
 
 	//2 channel opus with a rate of 48000 and constant bitrate
-	ffmpeg := exec.Command("ffmpeg", "-report", "-i", "-", "-f", "s8", "-ar", "48000", "-ac", "2", "-c:a", "libopus", "-vbr", "off", "-") //Must be these values
+	//We are using the lowest quality settings
+	ffmpeg := exec.Command("ffmpeg", "-i", "-", "-f", "s8", "-ar", "48000", "-ac", "2", "-c:a", "libopus", "-vbr", "off", "-compression_level", "0", "-application", "voip", "-packet_loss", "25", "-") //Must be these values
 	//Get stdio
 	ytdlIn, err := ytdl.StdinPipe()
 	if err != nil {
@@ -138,7 +139,7 @@ func (p *MusicPlayer) play(m *Music, voice *discordgo.VoiceConnection) {
 	ytdlIn.Write([]byte(m.URL))
 	ytdlIn.Close()
 	//Copy opus data until skipped
-	opusData := make([]byte, 240) //240 is the framesize for Discord
+	opusData := make([]byte, 240) //240 is the framesize for Discordgo. It should probably be increased somehow
 	p.skip = false
 	for !p.skip {
 		_, err = io.ReadAtLeast(ffmpegOut, opusData, 240)
