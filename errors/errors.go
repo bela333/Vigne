@@ -16,3 +16,4 @@ var NoMusic = New("couldn't find musicChannel and musicVoiceChannel in the confi
 var NotPlaying = New("", "There is nothing playing currently...")
 var NotRequester = New("", "You can't skip this music")
 var MusicTooLong = New("", "The selected song is too long")
+var MusicIsLive = New("", "Sorry, but I can't play live streams")

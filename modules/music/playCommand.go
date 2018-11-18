@@ -34,10 +34,9 @@ func (p PlayCommand) Action(m *discordgo.MessageCreate, args []string, creator *
 	message := creator.NewMessage()
 	message.SetContent("Loading...")
 	go func() {
-		//new message builder
-		newMessage := &messages.MessageBuilder{}
 		//Replace Loading... with new message after loading is done
-		defer message.ReplaceMessage(newMessage)
+		newMessage := message.GetAfter()
+		defer message.Delete()
 		//Actually add music to queue
 		info, err := p.module.Player.AddMusic(strings.Join(args, " "), m.Author)
 		if err == errors.InvalidExtractor {
@@ -45,7 +44,12 @@ func (p PlayCommand) Action(m *discordgo.MessageCreate, args []string, creator *
 			return
 		}
 		if err != nil {
+			e, ok := err.(*errors.PublicError)
 			newMessage.SetContent("Couldn't play music")
+			if ok {
+				newMessage.SetContent(e.PublicPart)
+			}
+			newMessage.SetExpiry(time.Second*10)
 			return
 		}
 		embed := newMessage.GetEmbedBuilder()

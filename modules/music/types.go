@@ -9,6 +9,7 @@ type Music struct {
 	Entries       []Music `json:"entries"`
 	URL           string  `json:"webpage_url"`
 	Duration      int     `json:"duration"`
+	IsLive bool `json:"is_live"`
 	RequesterID   string
 	RequesterName string
 }

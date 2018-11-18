@@ -177,6 +177,10 @@ func (p *MusicPlayer) AddMusic(url string, user *discordgo.User) (*Music, error)
 	if !d.CanPlay(time.Duration(m.Duration) * time.Second) {
 		return m, errors.MusicTooLong
 	}
+	//Make sure that it isn't live
+	if m.IsLive && !d.CanPlayLive() {
+		return m, errors.MusicIsLive
+	}
 	//Convert music data to JSON
 	jsonData, err := json.Marshal(m)
 	if err != nil {

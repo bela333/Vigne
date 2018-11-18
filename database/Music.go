@@ -60,3 +60,18 @@ func (d MusicDatabase) CanPlay(duration time.Duration) bool {
 	return true
 
 }
+
+func (d MusicDatabase) CanPlayLive() bool {
+	if d.d.Redis.Exists(d.d.Decorate("canPlayLive")).Val() == 0{
+		return true
+	}
+	val, err := d.d.Redis.Get(d.d.Decorate("canPlayLive")).Int()
+	if err != nil {
+		return  true
+	}
+	if val != 0 {
+		return true
+	}
+
+	return false
+}

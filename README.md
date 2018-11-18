@@ -21,6 +21,7 @@ vigne:welcomer:main | | ID of the channel where welcome messages should go
 vigne:welcomer:secret | | ID of the channel where messages of leaves and joins should go
 vigne:welcomer:text:before | | Message, that should be displayed when a user joins. Example: `Welcome %s! Have fun!`
 vigne:welcomer:text:after | | After a short period of time, the original message gets replaced by this one. Example: `Welcome %s!`
+vigne:canPlayLive | | 1 or 0. Whether the music bot can play live streams or not.
 
 ## Default commands
 
