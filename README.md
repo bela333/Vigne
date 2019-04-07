@@ -35,6 +35,11 @@ help | Lists all available, not hidden commands.
 roles | Hidden. Can only be used by moderators. Lists all roles available on the server and their IDs.
 replace | Hidden. Sends `Hello` then after a short while replaces the text with `World!`.
 
+## Credits
+Thank you to
+- Wolke and Akio for making [weeb.sh](https://weeb.sh/)
+- Daniele122898 for making the [weeb.go](https://github.com/Daniele122898/weeb.go) library
+
 ## Roadmap
 - [ ] Documentation
 - [x] Errors that are sent to the user
